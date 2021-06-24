@@ -18,23 +18,11 @@ import {
   Toolbar,
   DateNavigator,
   TodayButton,
-  ViewSwitcher
+  ViewSwitcher,
+  Resources
 } from "@devexpress/dx-react-scheduler-material-ui";
 
-import { appointments } from "../../../demo-data/appointments";
-
-const Appointment = ({ children, style, ...restProps }) => (
-  <Appointments.Appointment
-    {...restProps}
-    style={{
-      ...style,
-      backgroundColor: "#990033",
-      borderRadius: "15px"
-    }}
-  >
-    {children}
-  </Appointments.Appointment>
-);
+import { appointments } from "./demo-data/appointments";
 
 export default class Demo extends React.PureComponent {
   constructor(props) {
@@ -45,7 +33,25 @@ export default class Demo extends React.PureComponent {
       currentViewName: "work-week",
       addedAppointment: {},
       appointmentChanges: {},
-      editingAppointment: undefined
+      editingAppointment: undefined,
+      resources: [
+        {
+          fieldName: "teacher",
+          title: "Teacher",
+          allowMultiple: true,
+          instances: [
+            { id: 1, text: "Dhirendre Kumar" },
+            { id: 2, text: "Divyansh Bharadwaj" },
+            { id: 3, text: "Pooja Verma" },
+            { id: 4, text: "Nidhi singh" },
+            { id: 5, text: "Vaibhav diwan" },
+            { id: 6, text: "Deepak Mittal" },
+            { id: 7, text: "Divya verma" },
+            { id: 8, text: "Anupam Kumar" },
+            { id: 9, text: "Jugindre pal" }
+          ]
+        }
+      ]
     };
     this.currentViewNameChange = (currentViewName) => {
       this.setState({ currentViewName });
@@ -98,54 +104,52 @@ export default class Demo extends React.PureComponent {
       addedAppointment,
       currentViewName,
       appointmentChanges,
-      editingAppointment
+      editingAppointment,
+      resources
     } = this.state;
     return (
-      <React.Fragment>
-        <Paper>
-          <Scheduler data={data}>
-            <ViewState
-              defaultCurrentDate={currentDate}
-              currentViewName={currentViewName}
-              onCurrentViewNameChange={this.currentViewNameChange}
-            />
+      <Paper>
+        <Scheduler data={data}>
+          <ViewState
+            defaultCurrentDate={currentDate}
+            currentViewName={currentViewName}
+            onCurrentViewNameChange={this.currentViewNameChange}
+          />
+          <EditingState
+            onCommitChanges={this.commitChanges}
+            addedAppointment={addedAppointment}
+            onAddedAppointmentChange={this.changeAddedAppointment}
+            appointmentChanges={appointmentChanges}
+            onAppointmentChangesChange={this.changeAppointmentChanges}
+            editingAppointment={editingAppointment}
+            onEditingAppointmentChange={this.changeEditingAppointment}
+          />
 
-            <EditingState
-              onCommitChanges={this.commitChanges}
-              addedAppointment={addedAppointment}
-              onAddedAppointmentChange={this.changeAddedAppointment}
-              appointmentChanges={appointmentChanges}
-              onAppointmentChangesChange={this.changeAppointmentChanges}
-              editingAppointment={editingAppointment}
-              onEditingAppointmentChange={this.changeEditingAppointment}
-            />
-            <IntegratedEditing />
+          <DayView startDayHour={9} endDayHour={15} />
 
-            <DayView startDayHour={9} endDayHour={15} />
+          <WeekView
+            name="work-week"
+            displayName="Work Week"
+            excludedDays={[0, 6]}
+            startDayHour={9}
+            endDayHour={19}
+          />
+          <MonthView />
+          <Toolbar />
+          <ViewSwitcher />
+          <DateNavigator />
+          <TodayButton />
+          <IntegratedEditing />
+          <EditRecurrenceMenu />
 
-            <WeekView
-              name="work-week"
-              displayName="Work Week"
-              excludedDays={[0, 6]}
-              startDayHour={9}
-              endDayHour={19}
-            />
-            <MonthView />
-            <EditRecurrenceMenu />
-            <ConfirmationDialog />
+          <ConfirmationDialog />
+          <Appointments />
+          <AppointmentTooltip showOpenButton showDeleteButton />
 
-            <Appointments appointmentComponent={Appointment} />
-            <AppointmentTooltip showOpenButton showDeleteButton />
-
-            <AppointmentForm />
-
-            <Toolbar />
-            <ViewSwitcher />
-            <DateNavigator />
-            <TodayButton />
-          </Scheduler>
-        </Paper>
-      </React.Fragment>
+          <AppointmentForm />
+          <Resources data={resources} />
+        </Scheduler>
+      </Paper>
     );
   }
 }
